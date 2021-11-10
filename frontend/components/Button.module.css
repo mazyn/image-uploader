@@ -1,0 +1,19 @@
+.button {
+  display: block;
+  margin: 1.25rem auto 1rem;
+  background-color: #2f80ed;
+  border-radius: 8px;
+  color: #fff;
+  font-family: Poppins, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  min-height: 36px;
+  min-width: 120px;
+  border: none;
+  transition: background-color 0.15s ease;
+}
+
+.button:hover {
+  background-color: #74aaf2;
+}
