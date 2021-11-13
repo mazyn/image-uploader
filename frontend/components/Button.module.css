@@ -12,6 +12,7 @@
   min-width: 120px;
   border: none;
   transition: background-color 0.15s ease;
+  cursor: pointer;
 }
 
 .button:hover {
