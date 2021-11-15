@@ -1,13 +1,19 @@
 import Image from 'next/image';
 import styles from './DndUploader.module.css';
 import imagePlaceholder from '../public/image.svg';
-import Button from './Button';
-import { DragEventHandler, useState } from 'react';
+import { DragEventHandler } from 'react';
 
-const DndUploader: React.FC = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
+interface Props {
+  setSelectedFile: (file: File) => void;
+  handleErrorMessage: (err: string) => void;
+  validateFile: (file: File) => boolean;
+}
 
+const DndUploader: React.FC<Props> = ({
+  setSelectedFile,
+  handleErrorMessage,
+  validateFile,
+}) => {
   const dragOver: DragEventHandler<HTMLDivElement> = e => {
     e.preventDefault();
   };
@@ -23,7 +29,7 @@ const DndUploader: React.FC = () => {
   const fileDrop: DragEventHandler<HTMLDivElement> = e => {
     e.preventDefault();
     const files = e.dataTransfer?.files;
-    console.log({ files });
+
     if (files.length) {
       handleFile(files[0]);
     }
@@ -31,24 +37,12 @@ const DndUploader: React.FC = () => {
 
   const handleFile = (file: File) => {
     if (!validateFile(file)) {
-      setErrorMessage('File type not allowed.');
+      handleErrorMessage('File type not allowed.');
       return;
     }
 
-    setErrorMessage('');
+    handleErrorMessage('');
     setSelectedFile(file);
-  };
-
-  const validateFile = (file: File) => {
-    const validTypes = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/gif',
-      'image/x-icon',
-    ];
-
-    return validTypes.indexOf(file.type) != -1;
   };
 
   return (
@@ -65,11 +59,6 @@ const DndUploader: React.FC = () => {
         </div>
         <legend className={styles.legend}>Drag & Drop your image here</legend>
       </div>
-      {errorMessage && (
-        <span className={styles.errorMessage}>{errorMessage}</span>
-      )}
-      <span className={styles.or}>Or</span>
-      <Button label='Choose a file' action={() => {}} />
     </>
   );
 };
