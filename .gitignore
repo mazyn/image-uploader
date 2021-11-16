@@ -36,3 +36,6 @@ frontend/.vercel
 
 # typescript
 frontend/*.tsbuildinfo
+
+# uploaded images
+frontend/public/upload/*

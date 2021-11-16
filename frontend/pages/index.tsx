@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
+import { MdCheckCircle } from 'react-icons/md';
+
 import DndUploader from '../components/DndUploader';
 import FileUploaderButton from '../components/FileUploaderButton';
 import LoaderBar from '../components/LoaderBar';
@@ -9,16 +11,24 @@ import styles from '../styles/Home.module.css';
 import { validateFile } from '../utils/FileValidation';
 
 const Home: NextPage = () => {
-  const [image, setImage] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [imagePath, setImagePath] = useState('');
 
   const handleImageUpload = (file: File) => {
     setUploading(true);
-    setTimeout(() => {
+
+    const body = new FormData();
+
+    body.append('file', file);
+
+    fetch('/api/upload', {
+      method: 'POST',
+      body,
+    }).then(() => {
+      setImagePath(`/upload/${file.name}`);
       setUploading(false);
-      setImage(file);
-    }, 3000);
+    });
   };
 
   return (
@@ -33,7 +43,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        {!uploading && !image && (
+        {!uploading && !imagePath && (
           <div className={styles.card}>
             <h2>Upload your image</h2>
             <p>File should be Jpeg, Png,...</p>
@@ -54,7 +64,7 @@ const Home: NextPage = () => {
           </div>
         )}
 
-        {uploading && !image && (
+        {uploading && !imagePath && (
           <div className={styles.card}>
             <div className={styles.uploadingWrapper}>
               <span className={styles.uploadingText}>Uploading...</span>
@@ -65,7 +75,22 @@ const Home: NextPage = () => {
           </div>
         )}
 
-        {!uploading && image && <div>uploaded!</div>}
+        {!uploading && imagePath && (
+          <div className={styles.card}>
+            <div>
+              <MdCheckCircle color='#219653' size='42' />
+            </div>
+            <span className={styles.successText}>Uploaded Successfully!</span>
+            <div className={styles.imageUploadedWrapper}>
+              <Image
+                src={imagePath}
+                layout='fill'
+                alt='Uploaded picture'
+                blurDataURL='true'
+              />
+            </div>
+          </div>
+        )}
       </main>
 
       <footer className={styles.footer}>
